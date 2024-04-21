@@ -1,13 +1,13 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/urfave/cli/v2"
 
-	"github.com/LAZCO-STUDIO-LTD/Component-Manager/module"
+	"github.com/LAZCO-STUDIO-LTD/Component-Manager/command"
 )
 
 func main() {
@@ -21,24 +21,24 @@ func main() {
 				Name:    "version",
 				Aliases: []string{"v"},
 				Usage:   "show the version of ui",
-				Action: func(ctx *cli.Context) error {
-					fmt.Println(ctx.App.Version)
-					return nil
-				},
+				Action:  command.Version,
 			},
 			{
-				Name:  "init",
-				Usage: "initialize a new project",
-				Action: func(ctx *cli.Context) error {
-					pm := module.CheckPm()
-					fmt.Println(pm)
-					return nil
-				},
+				Name:   "init",
+				Usage:  "initialize a new project",
+				Action: command.Init,
 			},
 		},
 	}
 
 	if err := app.Run(os.Args); err != nil {
+		var errorString = err.Error()
+
+		if errorNumber, err := strconv.Atoi(errorString); err == nil {
+			os.Exit(errorNumber)
+		}
+
 		log.Fatal(err)
+		os.Exit(1)
 	}
 }
