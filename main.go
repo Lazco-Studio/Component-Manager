@@ -19,7 +19,7 @@ func main() {
 		Name:     "component-manager",
 		HelpName: "cm",
 		Usage:    "an component manager",
-		Version:  "v0.2.2",
+		Version:  "v0.2.3",
 		Commands: []*cli.Command{
 			{
 				Name:    "version",
