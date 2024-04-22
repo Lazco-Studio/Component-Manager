@@ -18,21 +18,21 @@ func Init(ctx *cli.Context) error {
 		}
 		return errors.New("1")
 	}
-	color.Greenf("Using:\t\t")
+	color.Magentaf("Using:\t\t")
 	color.Cyanln(packageManager)
 
 	projectPath, err := module.GetPath(ctx.Args().Get(0))
 	if err != nil {
 		switch err.Error() {
 		case "path does not exist":
-			color.Redln("Path does not exist.")
+			color.Redln("Specified path does not exist.")
 		case "path is not a directory":
-			color.Redln("Path is not a directory.")
+			color.Redln("Specified path is not a directory.")
 		}
 		return errors.New("1")
 	}
 
-	color.Greenf("Project Path:\t")
+	color.Magentaf("Project Path:\t")
 	color.Cyanln(projectPath)
 
 	componentPath, err := module.CreateComponentDirectory(projectPath)
@@ -41,16 +41,8 @@ func Init(ctx *cli.Context) error {
 		return errors.New("1")
 	}
 
-	color.Greenf("Component path:\t")
+	color.Magentaf("Component path:\t")
 	color.Cyanln(componentPath)
-
-	// module.FullWidthMessage("installation log start", color.Gray)
-	// err = module.InstallNodePackage(projectPath, packageManager, false, "fs")
-	// module.FullWidthMessage("installation log end", color.Gray)
-	// if err != nil {
-	// 	color.Redln(err.Error())
-	// 	return errors.New("1")
-	// }
 
 	return nil
 }

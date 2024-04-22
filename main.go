@@ -1,16 +1,20 @@
 package main
 
 import (
-	"log"
 	"os"
 	"strconv"
 
+	"github.com/gookit/color"
 	"github.com/urfave/cli/v2"
 
 	"github.com/LAZCO-STUDIO-LTD/Component-Manager/command"
 )
 
+var GITHUB_TOKEN string
+
 func main() {
+	os.Setenv("GITHUB_TOKEN", GITHUB_TOKEN)
+
 	app := &cli.App{
 		Name:     "component-manager",
 		HelpName: "cm",
@@ -28,6 +32,12 @@ func main() {
 				Usage:  "initialize a new project",
 				Action: command.Init,
 			},
+			{
+				Name:    "add",
+				Aliases: []string{"a"},
+				Usage:   "add a new component",
+				Action:  command.Add,
+			},
 		},
 	}
 
@@ -38,7 +48,7 @@ func main() {
 			os.Exit(errorNumber)
 		}
 
-		log.Fatal(err)
+		color.Redln(errorString)
 		os.Exit(1)
 	}
 }
