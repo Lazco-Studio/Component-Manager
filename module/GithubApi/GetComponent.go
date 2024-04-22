@@ -26,8 +26,11 @@ func GetComponent(path string) (string, error) {
 
 	file, directory, resp, err := githubClient.Repositories.GetContents(context, "LAZCO-STUDIO-LTD", "Component-Manager-Repo", path, nil)
 	if err != nil {
-		if resp.StatusCode != 200 {
+		if resp.StatusCode == 404 {
 			return "", errors.New("not found")
+		}
+		if (resp.StatusCode == 401) || (resp.StatusCode == 403) {
+			return "", errors.New("invalid github token")
 		}
 		return "", err
 	}
