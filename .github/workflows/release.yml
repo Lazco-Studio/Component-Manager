@@ -25,9 +25,9 @@ jobs:
         fi
 
     - name: Set up Go
-      uses: actions/setup-go@v2
+      uses: actions/setup-go@v5
       with:
-        go-version: '1.16'
+        go-version: '1.22'
 
     - name: Set up UPX
       uses: crazy-max/ghaction-upx@v3
