@@ -1,1 +1,8 @@
+# Build output
 /dist
+
+# Environment variables
+/env
+
+# Lazco Component
+/lazco_components
