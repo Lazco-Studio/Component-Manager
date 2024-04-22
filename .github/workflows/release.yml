@@ -1,0 +1,69 @@
+name: Release
+
+on:
+  push:
+    branches:
+    - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Check commit message
+      id: check_commit_message
+      run: |
+        commit_message=$(git log --format=%B -n 1 ${{ github.sha }})
+        if [[ $commit_message =~ ^v\d+\.\d+\.\d+$ ]]; then
+          echo "Commit message matches version format."
+        else
+          echo "Commit message does not match version format. Skipping release."
+          exit 1
+        fi
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: '1.16'
+
+    - name: Set up UPX
+      uses: crazy-max/ghaction-upx@v3
+      with:
+        install-only: true
+
+    - name: Install dependencies
+      run: go install
+
+    - name: Build binary
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      run: |
+        go build -ldflags "-s -w -X main.GITHUB_TOKEN=$GITHUB_TOKEN" -o ./dist/cm-cli_linux_amd64_uncompressed
+
+    - name: Compress binary
+      run: |
+        upx -f --best --lzma ./dist/cm-cli_linux_amd64_uncompressed -o ./dist/cm-cli_linux_amd64
+
+    - name: Create release
+      id: create_release
+      uses: CupOfTea696/gh-action-auto-release@v1.0.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        title: Release ${{ steps.check_commit_message.outputs.commit_message }}
+        tag: ${{ steps.check_commit_message.outputs.commit_message }}
+        draft: false
+        regex: "/^Release: #{semver}$/i"
+
+    - name: Upload release asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/cm-cli_linux_amd64
+        asset_name: cm-cli_linux_amd64
+        asset_content_type: application/octet-stream
