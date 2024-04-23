@@ -49,8 +49,11 @@ jobs:
       run: |
         upx -f --best --lzma dist/cm-cli_linux_amd64_uncompressed -o dist/cm-cli_linux_amd64
 
+    - name: Compress archive
+      run: tar -czvf dist/cm-cli_linux_amd64.tar.gz dist/cm-cli_linux_amd64
+
     - name: Upload artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: cm-cli
         path: dist
@@ -64,10 +67,13 @@ jobs:
 
     steps:
     - name: Download artifact
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4
       with:
         name: cm-cli
         path: dist
+
+    - name: Uncompress archive
+      run: tar -xzvf dist/cm-cli_linux_amd64.tar.gz -C dist
 
     - name: Create release
       id: create_release
