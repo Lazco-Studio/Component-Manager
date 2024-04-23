@@ -73,7 +73,9 @@ jobs:
         path: dist
 
     - name: Uncompress archive
-      run: tar -xzvf dist/cm-cli_linux_amd64.tar.gz -C dist
+      run: |
+        tar -xzvf dist/cm-cli_linux_amd64.tar.gz -C dist
+        ls -al dist
 
     - name: Create release
       id: create_release
