@@ -50,7 +50,7 @@ jobs:
         upx -f --best --lzma dist/cm-cli_linux_amd64_uncompressed -o dist/cm-cli_linux_amd64
 
     - name: Upload artifact
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@v2
       with:
         name: cm-cli
         path: dist
