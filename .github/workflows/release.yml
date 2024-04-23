@@ -7,6 +7,7 @@ on:
 
 jobs:
   check:
+    name: Check commit message
     runs-on: ubuntu-latest
     outputs:
       commit_message: ${{ steps.check_commit_message.outputs.commit_message }}
@@ -27,11 +28,15 @@ jobs:
         fi
 
   setup:
+    name: Setup dependencies
     needs: check
     if: ${{ needs.check.outputs.commit_message != '' }}
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
@@ -41,16 +46,20 @@ jobs:
         uses: crazy-max/ghaction-upx@v3
         with:
           install-only: true
-  
-      - name: Install dependencies
+
+      - name: Install go dependencies
         run: go install
 
   build:
+    name: Build and compress binary
     needs: [check, setup]
     if: ${{ needs.check.outputs.commit_message != '' }}
     runs-on: ubuntu-latest
 
     steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
     - name: Build binary
       env:
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -61,16 +70,15 @@ jobs:
       run: |
         upx -f --best --lzma ./dist/cm-cli_linux_amd64_uncompressed -o ./dist/cm-cli_linux_amd64
 
-    # - name: Create release
-    #   id: create_release
-    #   uses: CupOfTea696/gh-action-auto-release@v1.0.0
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #   with:
-    #     title: Release ${{ needs.check.outputs.commit_message }}
-    #     tag: ${{ needs.check.outputs.commit_message }}
-    #     draft: false
-    #     regex: "/^Release: #{semver}$/i"
+  release:
+    name: Create release and upload asset
+    needs: [check, setup, build]
+    if: ${{ needs.check.outputs.commit_message != '' }}
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
 
     - name: Create release
       id: create_release
