@@ -6,8 +6,10 @@ on:
     - main
 
 jobs:
-  build:
+  check:
     runs-on: ubuntu-latest
+    outputs:
+      commit_message: ${{ steps.check_commit_message.outputs.commit_message }}
 
     steps:
     - name: Checkout code
@@ -19,24 +21,36 @@ jobs:
         commit_message=$(git log --format=%B -n 1 ${{ github.sha }})
         if [[ $commit_message =~ ^v[0-9]+\.[0-9]+\.[0-9] ]]; then
           echo "Commit message matches version format."
+          echo "commit_message=$commit_message" >> "$GITHUB_OUTPUT"
         else
           echo "Commit message does not match version format. Skipping release."
-          exit 1
         fi
 
-    - name: Set up Go
-      uses: actions/setup-go@v5
-      with:
-        go-version: '1.22'
+  setup:
+    needs: check
+    if: ${{ needs.check.outputs.commit_message != '' }}
+    runs-on: ubuntu-latest
 
-    - name: Set up UPX
-      uses: crazy-max/ghaction-upx@v3
-      with:
-        install-only: true
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+  
+      - name: Set up UPX
+        uses: crazy-max/ghaction-upx@v3
+        with:
+          install-only: true
+  
+      - name: Install dependencies
+        run: go install
 
-    - name: Install dependencies
-      run: go install
+  build:
+    needs: [check, setup]
+    if: ${{ needs.check.outputs.commit_message != '' }}
+    runs-on: ubuntu-latest
 
+    steps:
     - name: Build binary
       env:
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -53,8 +67,8 @@ jobs:
     #   env:
     #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     #   with:
-    #     title: Release ${{ steps.check_commit_message.outputs.commit_message }}
-    #     tag: ${{ steps.check_commit_message.outputs.commit_message }}
+    #     title: Release ${{ needs.check.outputs.commit_message }}
+    #     tag: ${{ needs.check.outputs.commit_message }}
     #     draft: false
     #     regex: "/^Release: #{semver}$/i"
 
@@ -64,8 +78,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ steps.check_commit_message.outputs.commit_message }}
-        release_name: Release ${{ steps.check_commit_message.outputs.commit_message }}
+        tag_name: ${{ needs.check.outputs.commit_message }}
+        release_name: Release ${{ needs.check.outputs.commit_message }}
         body: |
           This is an automated release.
         draft: false
