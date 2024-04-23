@@ -69,9 +69,6 @@ jobs:
         name: cm-cli
         path: dist
 
-    - name: Add execute permission
-      run: sudo chmod 755 dist/cm-cli_linux_amd64
-
     - name: Create release
       id: create_release
       uses: actions/create-release@v1
