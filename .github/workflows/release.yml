@@ -37,8 +37,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Create dist directory
-      run: mkdir -p dist
+    - name: Create necessary directory
+      run: |
+        mkdir -p dist
+        mkdir -p dist/tar
+        mkdir -p dist/bin
 
     - name: Build binary
       env:
