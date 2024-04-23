@@ -75,6 +75,7 @@ jobs:
     needs: [check, setup, build]
     if: ${{ needs.check.outputs.commit_message != '' }}
     runs-on: ubuntu-latest
+    permissions: write-all
 
     steps:
     - name: Checkout code
