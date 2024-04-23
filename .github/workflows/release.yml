@@ -64,7 +64,7 @@ jobs:
 
     steps:
     - name: Download artifact
-      uses: actions/download-artifact@master
+      uses: actions/download-artifact@v2
       with:
         name: cm-cli
         path: dist
