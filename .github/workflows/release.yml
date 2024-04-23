@@ -27,32 +27,9 @@ jobs:
           echo "Commit message does not match version format. Skipping release."
         fi
 
-  setup:
-    name: Setup dependencies
-    needs: check
-    if: ${{ needs.check.outputs.commit_message != '' }}
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: '1.22'
-  
-      - name: Set up UPX
-        uses: crazy-max/ghaction-upx@v3
-        with:
-          install-only: true
-
-      - name: Install go dependencies
-        run: go install
-
   build:
     name: Build and compress binary
-    needs: [check, setup]
+    needs: [check]
     if: ${{ needs.check.outputs.commit_message != '' }}
     runs-on: ubuntu-latest
 
@@ -60,25 +37,38 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - run: mkdir -p dist
+
     - name: Build binary
       env:
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
       run: |
-        go build -ldflags "-s -w -X main.GITHUB_TOKEN=$GITHUB_TOKEN" -o ./dist/cm-cli_linux_amd64_uncompressed
+        go build -ldflags "-s -w -X main.GITHUB_TOKEN=$GITHUB_TOKEN" -o dist/cm-cli_linux_amd64_uncompressed
 
     - name: Compress binary
       run: |
-        upx -f --best --lzma ./dist/cm-cli_linux_amd64_uncompressed -o ./dist/cm-cli_linux_amd64
+        upx -f --best --lzma dist/cm-cli_linux_amd64_uncompressed -o dist/cm-cli_linux_amd64
 
+    - name: Upload binary
+      uses: actions/upload-artifact@master
+      with:
+        name: cm-cli
+        path: dist
 
   release:
     name: Create release and upload asset
-    needs: [check, setup, build]
+    needs: [check, build]
     if: ${{ needs.check.outputs.commit_message != '' }}
     runs-on: ubuntu-latest
     permissions: write-all
 
     steps:
+    - name: Download binary
+      uses: actions/download-artifact@master
+      with:
+        name: cm-cli
+        path: dist
+
     - name: Create release
       id: create_release
       uses: actions/create-release@v1
@@ -100,6 +90,11 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./dist/cm-cli_linux_amd64
+        asset_path: dist/cm-cli_linux_amd64
         asset_name: cm-cli_linux_amd64
         asset_content_type: application/octet-stream
+
+    - name: Delete artifact
+      uses: geekyeggo/delete-artifact@v5
+      with:
+          name: cm-cli
