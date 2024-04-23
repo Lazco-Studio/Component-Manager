@@ -71,18 +71,28 @@ jobs:
       run: |
         upx -f --best --lzma ./dist/cm-cli_linux_amd64_uncompressed -o ./dist/cm-cli_linux_amd64
 
+    # - name: Create release
+    #   id: create_release
+    #   uses: actions/create-release@v1
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   with:
+    #     tag_name: ${{ needs.check.outputs.commit_message }}
+    #     release_name: 🎉 Release ${{ needs.check.outputs.commit_message }}
+    #     body: |
+    #       This is an automated release.
+    #     draft: false
+    #     prerelease: false
+
     - name: Create release
       id: create_release
-      uses: actions/create-release@v1
+      uses: CupOfTea696/gh-action-auto-release@v1.0.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ needs.check.outputs.commit_message }}
-        release_name: 🎉 Release ${{ needs.check.outputs.commit_message }}
-        body: |
-          This is an automated release.
+        title: 🎉 Release ${{ needs.check.outputs.commit_message }}
+        tag: ${{ needs.check.outputs.commit_message }}
         draft: false
-        prerelease: false
 
     - name: Upload release asset
       uses: actions/upload-release-asset@v1
