@@ -61,7 +61,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: cm-cli
-        path: dist
+        path: dist/tar
 
   release:
     name: Create release and upload asset
@@ -75,12 +75,11 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: cm-cli
-        path: .
+        path: dist/tar
 
     - name: Uncompress archive
       run: |
-        ls -al .
-        tar -xzvf ./cm-cli_linux_amd64.tar.gz
+        tar -xzvf dist/tar/cm-cli_linux_amd64.tar.gz
 
     - name: Create release
       id: create_release
