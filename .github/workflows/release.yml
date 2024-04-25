@@ -75,11 +75,11 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: cm-cli
-        path: dist
+        path: .
 
     - name: Uncompress archive
       run: |
-        tar -xzvf dist/tar/cm-cli_linux_amd64.tar.gz -C dist
+        tar -xzvf ./cm-cli_linux_amd64.tar.gz
         ls -al dist
 
     - name: Create release
@@ -103,7 +103,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: dist/cm-cli_linux_amd64
+        asset_path: dist/bin/cm-cli_linux_amd64
         asset_name: cm-cli_linux_amd64
         asset_content_type: application/octet-stream
 
