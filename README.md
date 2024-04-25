@@ -4,7 +4,7 @@ Copy and paste the following command to your terminal.
 bash <(wget -qO- https://short.on-cloud.tw/cm-install-script)
 ```
 
-# Advance Installation / Developing / Contributing
+# Advance Installation / Contributing
 ## Requirements
 - [Go (1.22)](https://go.dev/doc/install)
 - [upx](https://github.com/upx/upx/releases/latest)
