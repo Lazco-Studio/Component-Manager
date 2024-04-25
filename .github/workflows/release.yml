@@ -83,30 +83,14 @@ jobs:
         tar -xzvf dist/tar/cm-cli_linux_amd64.tar.gz
         ls -al dist/bin
 
-    - name: Create release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Create release and upload asset
+      uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ needs.check.outputs.commit_message }}
-        release_name: 🎉 Release ${{ needs.check.outputs.commit_message }}
-        body: |
-          This release was automatically created by GitHub Actions.
-
-          Please refer to [readme](https://github.com/lazco-studio/Component-Manager/blob/main/README.md) for more details.
-        draft: false
-        prerelease: false
-
-    - name: Upload release asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: dist/bin/cm-cli_linux_amd64
-        asset_name: cm-cli_linux_amd64
-        asset_content_type: application/octet-stream
+        name: 🎉 Release ${{ needs.check.outputs.commit_message }}
+        generate_release_notes: true
+        files: |
+          dist/bin/cm-cli_linux_amd64
 
     - name: Delete artifact
       uses: geekyeggo/delete-artifact@v5
