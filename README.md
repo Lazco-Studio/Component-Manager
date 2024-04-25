@@ -12,7 +12,7 @@ bash <(wget -qO- https://short.on-cloud.tw/cm-install-script)
 ## Installation Steps
 Download the source files.
 ```bash
-git clone git@github.com:lazco-studio/Component-Manager.git
+git clone https://github.com/lazco-studio/Component-Manager.git
 ```
 
 Set the necessary environment variables.
