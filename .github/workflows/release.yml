@@ -79,8 +79,8 @@ jobs:
 
     - name: Uncompress archive
       run: |
+        ls -al .
         tar -xzvf ./cm-cli_linux_amd64.tar.gz
-        ls -al dist
 
     - name: Create release
       id: create_release
