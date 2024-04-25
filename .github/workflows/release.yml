@@ -40,29 +40,22 @@ jobs:
     - name: Create necessary directory
       run: |
         mkdir -p dist
-        mkdir -p dist/tar
-        mkdir -p dist/bin
 
     - name: Build binary
       env:
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
       run: |
-        go build -ldflags "-s -w -X main.GITHUB_TOKEN=$GITHUB_TOKEN" -o dist/bin/cm-cli_linux_amd64
+        go build -ldflags "-s -w -X main.GITHUB_TOKEN=$GITHUB_TOKEN" -o dist/cm-cli_linux_amd64
 
     - name: Compress binary
       run: |
-        upx -f --best --lzma dist/bin/cm-cli_linux_amd64
-
-    - name: Compress archive
-      run: |
-        tar -czvf dist/tar/cm-cli_linux_amd64.tar.gz dist/bin/cm-cli_linux_amd64
-        ls -al dist/bin
+        upx -f --best --lzma dist/cm-cli_linux_amd64
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: cm-cli
-        path: dist/tar
+        path: dist
 
   release:
     name: Create release and upload asset
@@ -76,21 +69,20 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: cm-cli
-        path: dist/tar
-
-    - name: Uncompress archive
-      run: |
-        tar -xzvf dist/tar/cm-cli_linux_amd64.tar.gz
-        ls -al dist/bin
+        path: dist
 
     - name: Create release and upload asset
       uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ needs.check.outputs.commit_message }}
         name: 🎉 Release ${{ needs.check.outputs.commit_message }}
+        body: |
+          Please follow the [installation guide](https://github.com/lazco-studio/Component-Manager?tab=readme-ov-file#installation) to install the latest version of the Component Manager.
         generate_release_notes: true
+        append_body: true
+        make_latest: "true"
         files: |
-          dist/bin/cm-cli_linux_amd64
+          dist/cm-cli_linux_amd64
 
     - name: Delete artifact
       uses: geekyeggo/delete-artifact@v5
