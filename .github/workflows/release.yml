@@ -56,6 +56,7 @@ jobs:
     - name: Compress archive
       run: |
         tar -czvf dist/tar/cm-cli_linux_amd64.tar.gz dist/bin/cm-cli_linux_amd64
+        ls -al dist/bin
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
@@ -80,6 +81,7 @@ jobs:
     - name: Uncompress archive
       run: |
         tar -xzvf dist/tar/cm-cli_linux_amd64.tar.gz
+        ls -al dist/bin
 
     - name: Create release
       id: create_release
