@@ -32,7 +32,9 @@ Run the build script.
 Then copy the executable file to `/usr/local/bin`.
 ```bash
 sudo cp ./dist/cm-cli_linux_amd64 /usr/local/bin/cm
+```
 
-# Grant execute permission
+Grant execute permission for `/usr/local/bin/cm`.
+```bash
 sudo chmod +x /usr/local/bin/cm
 ```
