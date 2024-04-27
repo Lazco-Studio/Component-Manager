@@ -16,15 +16,15 @@ func main() {
 	os.Setenv("GITHUB_TOKEN", GITHUB_TOKEN)
 
 	app := &cli.App{
-		Name:     "component-manager",
+		Name:     "Component-Manager",
 		HelpName: "cm",
-		Usage:    "an component manager",
+		Usage:    "A tool for managing JS/TS components and modules.",
 		Version:  "v0.2.29",
 		Commands: []*cli.Command{
 			{
 				Name:    "version",
 				Aliases: []string{"v"},
-				Usage:   "show the version of ui",
+				Usage:   "show the version of cm",
 				Action:  command.Version,
 			},
 			{
