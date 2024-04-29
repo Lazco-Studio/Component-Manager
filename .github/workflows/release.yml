@@ -39,7 +39,8 @@ jobs:
 
     - name: Create necessary directory
       run: |
-        mkdir -p dist
+        mkdir -p dist/uncompressed
+        mkdir -p dist/compressed
 
     - name: Build binary for linux/amd64
       env:
