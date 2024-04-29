@@ -46,6 +46,7 @@ app_name=cm
 download_link=https://github.com/lazco-studio/Component-Manager/releases/latest/download/cm-cli_$target
 
 function install() {
+  sudo -v
   echo -e -n "${GREEN}"
   sudo wget $download_link -q --show-progress --progress=bar:force -O /usr/local/bin/$app_name
   echo -e -n "${NC}"
@@ -56,8 +57,6 @@ if [ -f /usr/local/bin/$app_name ]; then
   echo -e -n "${YELLOW}${CROSSMARK} Warning: App named $app_name already exists in ${BLUE}/usr/local/bin${YELLOW}. Do you want to overwrite it? (y/N): ${NC}"
   read -n 1 -r
   echo
-
-  sudo -v
 
   if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo -e "${MAGENTA}${ROCKET} Updating ${BLUE}$app_name ${MAGENTA}...${NC}"
