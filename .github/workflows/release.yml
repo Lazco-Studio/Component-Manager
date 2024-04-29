@@ -41,15 +41,35 @@ jobs:
       run: |
         mkdir -p dist
 
-    - name: Build binary
+    - name: Build binary for linux/amd64
       env:
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
       run: |
-        go build -ldflags "-s -w -X main.GITHUB_TOKEN=$GITHUB_TOKEN" -o dist/cm-cli_linux_amd64
+        CGO_ENABLED=0  GOOS=linux    GOARCH=amd64 go build -ldflags "-s -w -X main.GITHUB_TOKEN=$GITHUB_TOKEN" -o ./dist/uncompressed/cm-cli_linux_amd64
 
-    - name: Compress binary
+    - name: Build binary for darwin/amd64
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
       run: |
-        upx -f --best --lzma dist/cm-cli_linux_amd64
+        CGO_ENABLED=0  GOOS=darwin   GOARCH=amd64 go build -ldflags "-s -w -X main.GITHUB_TOKEN=$GITHUB_TOKEN" -o ./dist/uncompressed/cm-cli_darwin_amd64
+
+    - name: Build binary for windows/amd64
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      run: |
+        CGO_ENABLED=0  GOOS=windows  GOARCH=amd64 go build -ldflags "-s -w -X main.GITHUB_TOKEN=$GITHUB_TOKEN" -o ./dist/uncompressed/cm-cli_windows_amd64
+
+    - name: Compress binary for linux/amd64
+      run: |
+        upx -f --best --lzma ./dist/uncompressed/cm-cli_linux_amd64 -o ./dist/compressed/cm-cli_linux_amd64
+
+    - name: Compress binary for darwin/amd64
+      run: |
+        upx -f --best --lzma ./dist/uncompressed/cm-cli_darwin_amd64 -o ./dist/compressed/cm-cli_darwin_amd64 --force-macos
+    
+    - name: Compress binary for windows/amd64
+      run: |
+        upx -f --best --lzma ./dist/uncompressed/cm-cli_windows_amd64 -o ./dist/compressed/cm-cli_windows_amd64
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
@@ -82,7 +102,9 @@ jobs:
         append_body: true
         make_latest: "true"
         files: |
-          dist/cm-cli_linux_amd64
+          dist/compressed/cm-cli_linux_amd64
+          dist/compressed/cm-cli_darwin_amd64
+          dist/compressed/cm-cli_windows_amd64
 
     - name: Delete artifact
       uses: geekyeggo/delete-artifact@v5
