@@ -14,30 +14,59 @@ ROCKET='\xF0\x9F\x9A\x80'
 CROSSMARK='\xE2\x9C\x98'
 HOURGLASS='\xE2\x8C\x9B'
 
+function not_supported() {
+  echo -e "${RED}${CROSSMARK} ${BLUE}$1${YELLOW} not supported.${NC}"
+  echo -e "${RED}${CROSSMARK} Installation aborted.${NC}"
+  exit 1
+}
+
+case $(uname -ms) in
+'Linux x86_64')
+  target=linux_amd64
+  echo -e "${GREEN}${CHECKMARK} Operating system ${BLUE}Linux x86_64 ${GREEN}detected.${NC}"
+  ;;
+'Darwin x86_64')
+  target=darwin_amd64
+  echo -e "${GREEN}${CHECKMARK} Operating system ${BLUE}macOS x86_64 ${GREEN}detected.${NC}"
+  ;;
+'Darwin arm64')
+  target=darwin_amd64
+  echo -e "${GREEN}${CHECKMARK} Operating system ${BLUE}macOS arm64 ${GREEN}detected.${NC}"
+  ;;
+'Linux aarch64' | 'Linux arm64')
+  not_supported "Linux arm64"
+  ;;
+*)
+  not_supported "$(uname -ms)"
+  ;;
+esac
+
 # Variables
 app_name=cm
-download_link=https://github.com/lazco-studio/Component-Manager/releases/latest/download/cm-cli_linux_amd64
+download_link=https://github.com/lazco-studio/Component-Manager/releases/latest/download/cm-cli_$target
 
 function install() {
+  echo -e -n "${GREEN}"
   sudo wget $download_link -q --show-progress --progress=bar:force -O /usr/local/bin/$app_name
+  echo -e -n "${NC}"
   sudo chmod +x /usr/local/bin/$app_name
 }
 
 if [ -f /usr/local/bin/$app_name ]; then
-  echo -e -n "${YELLOW}Warning: App named $app_name already exists in /usr/local/bin. Do you want to overwrite it? (y/N): ${NC}"
+  echo -e -n "${YELLOW}${CROSSMARK} Warning: App named $app_name already exists in ${BLUE}/usr/local/bin${YELLOW}. Do you want to overwrite it? (y/N): ${NC}"
   read -n 1 -r
   echo
 
   sudo -v
 
   if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo -e "${GREEN}Updating $app_name...${NC}"
+    echo -e "${MAGENTA}${ROCKET} Updating ${BLUE}$app_name ${MAGENTA}...${NC}"
     install
   else
-    echo -e "${RED}Installation aborted.${NC}"
+    echo -e "${RED}${CROSSMARK} Installation aborted.${NC}"
     exit 1
   fi
 else
-  echo -e "${GREEN}Installing $app_name...${NC}"
+  echo -e "${MAGENTA}${ROCKET} Installing ${BLUE}$app_name ${MAGENTA}...${NC}"
   install
 fi
