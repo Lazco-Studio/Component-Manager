@@ -60,6 +60,11 @@ jobs:
       run: |
         CGO_ENABLED=0  GOOS=windows  GOARCH=amd64 go build -ldflags "-s -w -X main.GITHUB_TOKEN=$GITHUB_TOKEN" -o ./dist/uncompressed/cm-cli_windows_amd64
 
+    - name: Install UPX
+      uses: crazy-max/ghaction-upx@v3
+      with:
+        install-only: true
+
     - name: Compress binary for linux/amd64
       run: |
         upx -f --best --lzma ./dist/uncompressed/cm-cli_linux_amd64 -o ./dist/compressed/cm-cli_linux_amd64
