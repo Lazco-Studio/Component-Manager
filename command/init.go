@@ -10,7 +10,7 @@ import (
 )
 
 func Init(ctx *cli.Context) error {
-	packageManager, err := module.CheckPm()
+	_, err := module.CheckPm()
 	if err != nil {
 		switch err.Error() {
 		case "no package manager found":
@@ -18,8 +18,6 @@ func Init(ctx *cli.Context) error {
 		}
 		return errors.New("1")
 	}
-	color.Magentaf("Using:\t\t")
-	color.Cyanln(packageManager)
 
 	projectPath, err := module.GetPath(ctx.Args().Get(0))
 	if err != nil {
@@ -32,16 +30,13 @@ func Init(ctx *cli.Context) error {
 		return errors.New("1")
 	}
 
-	color.Magentaf("Project Path:\t")
-	color.Cyanln(projectPath)
-
 	componentPath, err := module.CreateComponentDirectory(projectPath)
 	if err != nil {
 		color.Redln(err.Error())
 		return errors.New("1")
 	}
 
-	color.Magentaf("Component path:\t")
+	color.Magentaf("Component directory:\t")
 	color.Cyanln(componentPath)
 
 	return nil

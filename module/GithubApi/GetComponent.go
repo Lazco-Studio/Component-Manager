@@ -6,12 +6,15 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 
 	"github.com/google/go-github/v61/github"
 	"github.com/gookit/color"
 	"github.com/gookit/config/v2"
+
+	"Component-Manager/module"
 )
 
 // downloadFile downloads a file from its GitHub download URL and saves it to the specified local path.
@@ -57,7 +60,7 @@ func downloadFile(fileContent *github.RepositoryContent, componentPath string) e
 		return errors.New("failed to write file: " + filePath)
 	}
 
-	color.Magentap("Downloaded: ")
+	color.Magentap("Downloaded:\t")
 	color.Cyanln(filepath.Join(componentName, fileContent.GetName()))
 
 	return nil
@@ -93,7 +96,19 @@ func downloadContents(githubClient *github.Client, context context.Context, comp
 }
 
 func GetComponent(componentName string) (string, error) {
+	COMPONENT_DIRECTORY := config.String("component_directory")
 	SOURCE_COMPONENT_DIRECTORY := config.String("source.component_directory")
+
+	packageManager, err := module.CheckPm()
+	if err != nil {
+		switch err.Error() {
+		case "no package manager found":
+			color.Redln("No package manager found. Please install one of the following package managers: pnpm, bun, yarn, npm.")
+		}
+		return "", errors.New("1")
+	}
+	color.Magentaf("Using:\t\t")
+	color.Cyanln(packageManager)
 
 	componentPath := filepath.Join(SOURCE_COMPONENT_DIRECTORY, componentName)
 
@@ -106,6 +121,17 @@ func GetComponent(componentName string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
+	color.Yellowln("Installing dependencies...")
+	module.FullWidthMessage("installation log start", color.Gray)
+	cmd := exec.Command(packageManager, "install")
+	cmd.Dir = filepath.Join(COMPONENT_DIRECTORY, componentName)
+	cmd.Stdout = os.Stdout
+	err = cmd.Run()
+	if err != nil {
+		return "", err
+	}
+	module.FullWidthMessage("installation log end", color.Gray)
 
 	return componentName, nil
 }
