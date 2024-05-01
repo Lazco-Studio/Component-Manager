@@ -18,7 +18,7 @@ func Add(ctx *cli.Context) error {
 		return errors.New("1")
 	}
 
-	path, err := githubapi.GetComponent("Components/" + componentName)
+	_, err := githubapi.FindComponent(componentName)
 	if err != nil {
 		switch err.Error() {
 		case "not found":
@@ -34,8 +34,13 @@ func Add(ctx *cli.Context) error {
 		}
 	}
 
-	color.Magentaf("URL: ")
-	color.Cyanln("https://raw.githubusercontent.com/LAZCO-STUDIO-LTD/Component-Manager-Repo/main/" + path)
+	fileContent, err := githubapi.GetComponent(componentName)
+	if err != nil {
+		return err
+	}
+
+	color.Greenp("Successfully added component: ")
+	color.Cyanln(fileContent)
 
 	return nil
 }

@@ -3,58 +3,104 @@ package githubapi
 import (
 	"context"
 	"errors"
+	"io"
+	"net/http"
 	"os"
 	"path/filepath"
-	"slices"
+	"strings"
 
 	"github.com/google/go-github/v61/github"
-	"golang.org/x/oauth2"
+	"github.com/gookit/color"
 )
 
-func GetComponent(path string) (string, error) {
-	accessToken := os.Getenv("GITHUB_TOKEN")
-	if accessToken == "" {
-		return "", errors.New("please set the GITHUB_TOKEN environment variable")
+// downloadFile downloads a file from its GitHub download URL and saves it to the specified local path.
+func downloadFile(fileContent *github.RepositoryContent, componentPath string) error {
+	// remove first path in componentPath
+	componentPathParts := strings.Split(componentPath, "/")
+	componentName := strings.Join(componentPathParts[1:], "/")
+
+	filePath := filepath.Join("lazco_components", componentName, fileContent.GetName())
+
+	// Get the download URL for the file.
+	downloadURL := fileContent.GetDownloadURL()
+
+	dirPath := filepath.Dir(filePath)
+	if err := os.MkdirAll(dirPath, os.ModePerm); err != nil {
+		return errors.New("failed to create directory: " + dirPath)
 	}
 
-	context := context.Background()
-	ts := oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: accessToken},
-	)
-	tc := oauth2.NewClient(context, ts)
-	githubClient := github.NewClient(tc)
-
-	file, directory, resp, err := githubClient.Repositories.GetContents(context, "LAZCO-STUDIO-LTD", "Component-Manager-Repo", path, nil)
+	// Perform an HTTP GET request to download the file content.
+	resp, err := http.Get(downloadURL)
 	if err != nil {
-		if resp.StatusCode == 404 {
-			return "", errors.New("not found")
+		return errors.New("failed to download the file: " + downloadURL)
+	}
+	defer resp.Body.Close()
+
+	// Ensure the request was successful.
+	if resp.StatusCode != 200 {
+		return errors.New("failed to download the file: " + downloadURL)
+	}
+
+	// Create a local file where the content will be saved.
+	out, err := os.Create(filePath)
+	if err != nil {
+		return errors.New("failed to create file: " + filePath)
+	}
+	defer out.Close()
+
+	// Copy the downloaded content to the local file.
+	_, err = io.Copy(out, resp.Body)
+	if err != nil {
+		return errors.New("failed to write file: " + filePath)
+	}
+
+	color.Magentap("Downloaded: ")
+	color.Cyanln(filepath.Join(componentName, fileContent.GetName()))
+
+	return nil
+}
+
+// downloadContents recursively downloads files from a given repository path.
+func downloadContents(githubClient *github.Client, context context.Context, componentPath string) error {
+	owner := "LAZCO-STUDIO-LTD"
+	repo := "Component-Manager-Repo"
+
+	_, directoryContents, _, err := githubClient.Repositories.GetContents(context, owner, repo, componentPath, nil)
+	if err != nil {
+		return err
+	}
+
+	for _, content := range directoryContents {
+		if *content.Type == "dir" {
+			// Recursive call for subdirectories
+			err := downloadContents(githubClient, context, *content.Path)
+			if err != nil {
+				return err
+			}
+		} else if *content.Type == "file" {
+			// Download file
+			err := downloadFile(content, componentPath)
+			if err != nil {
+				return err
+			}
 		}
-		if (resp.StatusCode == 401) || (resp.StatusCode == 403) {
-			return "", errors.New("invalid github token")
-		}
+	}
+
+	return nil
+}
+
+func GetComponent(componentName string) (string, error) {
+	componentPath := "Components/" + componentName
+
+	githubClient, context, err := GithubClient()
+	if err != nil {
 		return "", err
 	}
 
-	if file != nil {
-		return "", errors.New("not a directory")
+	err = downloadContents(githubClient, context, componentPath)
+	if err != nil {
+		return "", err
 	}
 
-	if directory != nil {
-		var fileList []string
-
-		for _, file := range directory {
-			fileList = append(fileList, *file.Name)
-		}
-
-		checkList := []string{"types", "index.ts", "package.json"}
-		for _, checkFile := range checkList {
-			if !slices.Contains(fileList, checkFile) {
-				return "", errors.New("not a component")
-			}
-		}
-
-		return filepath.Clean(*directory[0].Path + "/.."), nil
-	}
-
-	return "", nil
+	return componentName, nil
 }
