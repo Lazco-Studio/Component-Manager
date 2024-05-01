@@ -12,14 +12,14 @@ import (
 	"Component-Manager/command"
 )
 
-//go:embed cm.json
+//go:embed .cmrc.json
 var configFile embed.FS
 
 var GITHUB_TOKEN string
 
 func main() {
 	os.Setenv("GITHUB_TOKEN", GITHUB_TOKEN)
-	configFileContent, err := configFile.ReadFile("cm.json")
+	configFileContent, err := configFile.ReadFile(".cmrc.json")
 	if err != nil {
 		color.Redln(err)
 		os.Exit(1)
@@ -50,7 +50,7 @@ func main() {
 			},
 			{
 				Name:    "add",
-				Aliases: []string{"a"},
+				Aliases: []string{"a", "get", "download"},
 				Usage:   "add a new component",
 				Action:  command.Add,
 			},
