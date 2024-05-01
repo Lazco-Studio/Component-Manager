@@ -1,6 +1,7 @@
 package main
 
 import (
+	"embed"
 	"os"
 	"strconv"
 
@@ -11,12 +12,20 @@ import (
 	"Component-Manager/command"
 )
 
+//go:embed cm.json
+var configFile embed.FS
+
 var GITHUB_TOKEN string
 
 func main() {
 	os.Setenv("GITHUB_TOKEN", GITHUB_TOKEN)
+	configFileContent, err := configFile.ReadFile("cm.json")
+	if err != nil {
+		color.Redln(err)
+		os.Exit(1)
+	}
 
-	err := config.LoadFiles("cm.json")
+	err = config.LoadSources("json", configFileContent)
 	if err != nil {
 		color.Redln(err)
 		os.Exit(1)
