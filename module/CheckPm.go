@@ -3,10 +3,12 @@ package module
 import (
 	"errors"
 	"os/exec"
+
+	"github.com/gookit/config/v2"
 )
 
 func CheckPm() (string, error) {
-	var checkList = []string{"pnpm", "bun", "yarn", "npm"}
+	checkList := config.Strings("package_managers")
 
 	for _, bin := range checkList {
 		if _, err := exec.LookPath(bin); err == nil {

@@ -6,7 +6,7 @@ import (
 	"github.com/gookit/color"
 	"github.com/urfave/cli/v2"
 
-	"github.com/LAZCO-STUDIO-LTD/Component-Manager/module"
+	"Component-Manager/module"
 )
 
 func Init(ctx *cli.Context) error {

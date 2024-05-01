@@ -2,8 +2,6 @@ package module
 
 import (
 	"os"
-	// "bytes"
-	// "errors"
 	"os/exec"
 )
 

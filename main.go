@@ -5,15 +5,22 @@ import (
 	"strconv"
 
 	"github.com/gookit/color"
+	"github.com/gookit/config/v2"
 	"github.com/urfave/cli/v2"
 
-	"github.com/LAZCO-STUDIO-LTD/Component-Manager/command"
+	"Component-Manager/command"
 )
 
 var GITHUB_TOKEN string
 
 func main() {
 	os.Setenv("GITHUB_TOKEN", GITHUB_TOKEN)
+
+	err := config.LoadFiles("cm.json")
+	if err != nil {
+		color.Redln(err)
+		os.Exit(1)
+	}
 
 	app := &cli.App{
 		Name:     "Component-Manager",

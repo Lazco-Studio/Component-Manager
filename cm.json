@@ -1,0 +1,14 @@
+{
+  "package_managers": [
+    "pnpm",
+    "bun",
+    "yarn",
+    "npm"
+  ],
+  "component_directory": "lazco_components",
+  "source": {
+    "owner": "LAZCO-STUDIO-LTD",
+    "repo": "Component-Manager-Repo",
+    "component_directory": "Components"
+  }
+}

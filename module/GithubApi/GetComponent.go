@@ -11,15 +11,18 @@ import (
 
 	"github.com/google/go-github/v61/github"
 	"github.com/gookit/color"
+	"github.com/gookit/config/v2"
 )
 
 // downloadFile downloads a file from its GitHub download URL and saves it to the specified local path.
 func downloadFile(fileContent *github.RepositoryContent, componentPath string) error {
+	COMPONENT_DIRECTORY := config.String("component_directory")
+
 	// remove first path in componentPath
 	componentPathParts := strings.Split(componentPath, "/")
 	componentName := strings.Join(componentPathParts[1:], "/")
 
-	filePath := filepath.Join("lazco_components", componentName, fileContent.GetName())
+	filePath := filepath.Join(COMPONENT_DIRECTORY, componentName, fileContent.GetName())
 
 	// Get the download URL for the file.
 	downloadURL := fileContent.GetDownloadURL()
@@ -62,10 +65,10 @@ func downloadFile(fileContent *github.RepositoryContent, componentPath string) e
 
 // downloadContents recursively downloads files from a given repository path.
 func downloadContents(githubClient *github.Client, context context.Context, componentPath string) error {
-	owner := "LAZCO-STUDIO-LTD"
-	repo := "Component-Manager-Repo"
+	OWNER := config.String("source.owner")
+	REPO := config.String("source.repo")
 
-	_, directoryContents, _, err := githubClient.Repositories.GetContents(context, owner, repo, componentPath, nil)
+	_, directoryContents, _, err := githubClient.Repositories.GetContents(context, OWNER, REPO, componentPath, nil)
 	if err != nil {
 		return err
 	}
@@ -90,7 +93,9 @@ func downloadContents(githubClient *github.Client, context context.Context, comp
 }
 
 func GetComponent(componentName string) (string, error) {
-	componentPath := "Components/" + componentName
+	SOURCE_COMPONENT_DIRECTORY := config.String("source.component_directory")
+
+	componentPath := filepath.Join(SOURCE_COMPONENT_DIRECTORY, componentName)
 
 	githubClient, context, err := GithubClient()
 	if err != nil {

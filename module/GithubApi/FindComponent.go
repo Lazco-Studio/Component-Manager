@@ -4,17 +4,23 @@ import (
 	"errors"
 	"path/filepath"
 	"slices"
+
+	"github.com/gookit/config/v2"
 )
 
 func FindComponent(componentName string) (string, error) {
-	path := "Components/" + componentName
+	SOURCE_COMPONENT_DIRECTORY := config.String("source.component_directory")
+	OWNER := config.String("source.owner")
+	REPO := config.String("source.repo")
+
+	path := filepath.Join(SOURCE_COMPONENT_DIRECTORY, componentName)
 
 	githubClient, context, err := GithubClient()
 	if err != nil {
 		return "", err
 	}
 
-	file, directory, resp, err := githubClient.Repositories.GetContents(context, "LAZCO-STUDIO-LTD", "Component-Manager-Repo", path, nil)
+	file, directory, resp, err := githubClient.Repositories.GetContents(context, OWNER, REPO, path, nil)
 	if err != nil {
 		if resp.StatusCode == 404 {
 			return "", errors.New("not found")
