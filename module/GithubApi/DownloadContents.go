@@ -50,7 +50,7 @@ func DownloadFile(fileContent *github.RepositoryContent, componentPath string) e
 		return errors.New("failed to write file: " + filePath)
 	}
 
-	color.Magentap("Downloaded:\t")
+	color.Greenp(" + ")
 	color.Cyanln(filepath.Join(componentName, fileContent.GetName()))
 
 	return nil

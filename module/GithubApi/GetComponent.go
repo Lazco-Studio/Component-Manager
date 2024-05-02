@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 
 	"github.com/gookit/color"
 	"github.com/gookit/config/v2"
@@ -15,16 +16,17 @@ import (
 func GetComponent(componentName string) (string, error) {
 	COMPONENT_DIRECTORY := config.String("component_directory")
 	SOURCE_COMPONENT_DIRECTORY := config.String("source.component_directory")
+	PACKAGE_MANAGERS := config.Strings("package_managers")
 
 	packageManager, err := module.CheckPm()
 	if err != nil {
 		switch err.Error() {
 		case "no package manager found":
-			color.Redln("No package manager found. Please install one of the following package managers: pnpm, bun, yarn, npm.")
+			return "", errors.New("no package manager found, please install one of the following package managers: " + strings.Join(PACKAGE_MANAGERS, ", ") + ".")
 		}
-		return "", errors.New("1")
+		return "", err
 	}
-	color.Magentaf("Using:\t\t")
+	color.Magentaf("Using package manager: ")
 	color.Cyanln(packageManager)
 
 	componentPath := filepath.Join(SOURCE_COMPONENT_DIRECTORY, componentName)
@@ -34,6 +36,7 @@ func GetComponent(componentName string) (string, error) {
 		return "", err
 	}
 
+	color.Magentaln("Downloaded:")
 	err = DownloadComponent(githubClient, context, componentPath)
 	if err != nil {
 		return "", err

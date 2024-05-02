@@ -52,7 +52,7 @@ func LoadConfig(configPath string, officialConfigBytes []byte) (string, error) {
 		return "", errors.New("no source component directory found")
 	}
 
-	color.Magentap("Using custom config:\t")
+	color.Magentap("Using custom config: ")
 	color.Cyanln(configPath)
 
 	return configPath, nil

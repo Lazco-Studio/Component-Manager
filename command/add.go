@@ -17,8 +17,7 @@ func Add(ctx *cli.Context) error {
 	componentName := ctx.Args().Get(0)
 
 	if _, err := os.Stat(COMPONENT_DIRECTORY); errors.Is(err, os.ErrNotExist) {
-		color.Redln("Project isn't initialized yet. Please run 'cm init' first.")
-		return errors.New("1")
+		return errors.New("project isn't initialized yet. Please run 'cm init' first.")
 	}
 
 	_, err := githubapi.FindComponent(componentName)
@@ -29,8 +28,7 @@ func Add(ctx *cli.Context) error {
 		case "not a directory":
 			fallthrough
 		case "not a component":
-			color.Redln("Component " + componentName + " not found.")
-			return errors.New("1")
+			return errors.New("component " + componentName + " not found.")
 
 		default:
 			return err

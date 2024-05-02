@@ -2,41 +2,45 @@ package command
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/gookit/color"
 	"github.com/urfave/cli/v2"
+
+	"github.com/gookit/config/v2"
 
 	"Component-Manager/module"
 )
 
 func Init(ctx *cli.Context) error {
+	PACKAGE_MANAGERS := config.Strings("package_managers")
+
 	_, err := module.CheckPm()
 	if err != nil {
 		switch err.Error() {
 		case "no package manager found":
-			color.Redln("No package manager found. Please install one of the following package managers: pnpm, bun, yarn, npm.")
+			return errors.New("no package manager found, please install one of the following package managers: " + strings.Join(PACKAGE_MANAGERS, ", ") + ".")
 		}
-		return errors.New("1")
+		return err
 	}
 
 	projectPath, err := module.GetPath(ctx.Args().Get(0))
 	if err != nil {
 		switch err.Error() {
 		case "path does not exist":
-			color.Redln("Specified path does not exist.")
+			return errors.New("specified path does not exist.")
 		case "path is not a directory":
-			color.Redln("Specified path is not a directory.")
+			return errors.New("specified path is not a directory.")
 		}
-		return errors.New("1")
+		return err
 	}
 
 	componentPath, err := module.CreateComponentDirectory(projectPath)
 	if err != nil {
-		color.Redln(err.Error())
-		return errors.New("1")
+		return err
 	}
 
-	color.Magentaf("Component directory:\t")
+	color.Magentaf("Component directory: ")
 	color.Cyanln(componentPath)
 
 	return nil

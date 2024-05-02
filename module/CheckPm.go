@@ -8,9 +8,9 @@ import (
 )
 
 func CheckPm() (string, error) {
-	checkList := config.Strings("package_managers")
+	PACKAGE_MANAGERS := config.Strings("package_managers")
 
-	for _, bin := range checkList {
+	for _, bin := range PACKAGE_MANAGERS {
 		if _, err := exec.LookPath(bin); err == nil {
 			return bin, nil
 		}
