@@ -6,26 +6,21 @@ import (
 	"strconv"
 
 	"github.com/gookit/color"
-	"github.com/gookit/config/v2"
 	"github.com/urfave/cli/v2"
 
 	"Component-Manager/command"
+	"Component-Manager/module"
 )
 
-//go:embed .cmrc.json
+//go:embed .cmrc.official.json
 var configFile embed.FS
 
 var GITHUB_TOKEN string
 
 func main() {
 	os.Setenv("GITHUB_TOKEN", GITHUB_TOKEN)
-	configFileContent, err := configFile.ReadFile(".cmrc.json")
-	if err != nil {
-		color.Redln(err)
-		os.Exit(1)
-	}
 
-	err = config.LoadSources("json", configFileContent)
+	officialConfigBytes, err := configFile.ReadFile(".cmrc.official.json")
 	if err != nil {
 		color.Redln(err)
 		os.Exit(1)
@@ -44,15 +39,21 @@ func main() {
 				Action:  command.Version,
 			},
 			{
-				Name:   "init",
-				Usage:  "initialize a new project",
+				Name:  "init",
+				Usage: "initialize a new project",
+				Before: func(c *cli.Context) error {
+					return module.LoadAppConfig(c, officialConfigBytes)
+				},
 				Action: command.Init,
 			},
 			{
 				Name:    "add",
 				Aliases: []string{"a", "get", "download"},
 				Usage:   "add a new component",
-				Action:  command.Add,
+				Before: func(c *cli.Context) error {
+					return module.LoadAppConfig(c, officialConfigBytes)
+				},
+				Action: command.Add,
 			},
 		},
 	}
