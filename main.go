@@ -41,8 +41,14 @@ func main() {
 			{
 				Name:  "init",
 				Usage: "initialize a new project",
-				Before: func(c *cli.Context) error {
-					return module.LoadAppConfig(c, officialConfigBytes)
+				Before: func(ctx *cli.Context) error {
+					upToDate, err := module.CheckRemoteVersion(ctx, true)
+					if err != nil {
+						return err
+					} else if !upToDate {
+						color.Normal.Println()
+					}
+					return module.LoadAppConfig(ctx, officialConfigBytes)
 				},
 				Action: command.Init,
 			},
@@ -50,8 +56,14 @@ func main() {
 				Name:    "add",
 				Aliases: []string{"a", "get", "download"},
 				Usage:   "add a new component",
-				Before: func(c *cli.Context) error {
-					return module.LoadAppConfig(c, officialConfigBytes)
+				Before: func(ctx *cli.Context) error {
+					upToDate, err := module.CheckRemoteVersion(ctx, true)
+					if err != nil {
+						return err
+					} else if !upToDate {
+						color.Normal.Println()
+					}
+					return module.LoadAppConfig(ctx, officialConfigBytes)
 				},
 				Action: command.Add,
 			},

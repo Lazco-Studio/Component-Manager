@@ -19,7 +19,7 @@ func GetComponent(componentName string) (string, error) {
 	if err != nil {
 		switch err.Error() {
 		case "no package manager found":
-			return "", errors.New("no package manager found, please install one of the following package managers: " + strings.Join(PACKAGE_MANAGERS, ", ") + ".")
+			return "", errors.New("no package manager found, please install one of the following package managers: " + strings.Join(PACKAGE_MANAGERS, ", "))
 		}
 		return "", err
 	}

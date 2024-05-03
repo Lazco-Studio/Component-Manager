@@ -15,10 +15,9 @@ func CreateComponentDirectory(projectPath string) (string, error) {
 
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		err = os.Mkdir(path, 0755)
-		color.Normal.Renderln("\n")
 		return path, err
 	} else {
-		color.Yellowp("\nwarning: Component directory ")
+		color.Yellowp("Warning: Component directory ")
 		color.Cyanp(COMPONENT_DIRECTORY)
 		color.Yellowln(" already exists. Using existing directory.")
 		return path, nil

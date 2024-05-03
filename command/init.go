@@ -19,7 +19,7 @@ func Init(ctx *cli.Context) error {
 	if err != nil {
 		switch err.Error() {
 		case "no package manager found":
-			return errors.New("no package manager found, please install one of the following package managers: " + strings.Join(PACKAGE_MANAGERS, ", ") + ".")
+			return errors.New("no package manager found, please install one of the following package managers: " + strings.Join(PACKAGE_MANAGERS, ", "))
 		}
 		return err
 	}
@@ -33,18 +33,18 @@ func Init(ctx *cli.Context) error {
 	if err != nil {
 		switch err.Error() {
 		case "path does not exist":
-			return errors.New("specified path does not exist.")
+			return errors.New("specified path does not exist")
 		case "path is not a directory":
-			return errors.New("specified path is not a directory.")
+			return errors.New("specified path is not a directory")
 		}
 		return err
 	}
 
+	color.Normal.Println()
 	componentPath, err := module.CreateComponentDirectory(projectPath)
 	if err != nil {
 		return err
 	}
-
 	color.Magentaf("Component directory: ")
 	color.Cyanln(componentPath)
 
