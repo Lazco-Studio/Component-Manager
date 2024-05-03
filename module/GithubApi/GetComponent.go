@@ -2,8 +2,6 @@ package githubapi
 
 import (
 	"errors"
-	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 
@@ -14,7 +12,6 @@ import (
 )
 
 func GetComponent(componentName string) (string, error) {
-	COMPONENT_DIRECTORY := config.String("component_directory")
 	SOURCE_COMPONENT_DIRECTORY := config.String("source.component_directory")
 	PACKAGE_MANAGERS := config.Strings("package_managers")
 
@@ -36,22 +33,16 @@ func GetComponent(componentName string) (string, error) {
 		return "", err
 	}
 
-	color.Magentaln("Downloaded:")
+	color.Magentaln("\nDownloaded:")
 	err = DownloadComponent(githubClient, context, componentPath)
 	if err != nil {
 		return "", err
 	}
 
-	color.Yellowln("Installing dependencies...")
-	module.FullWidthMessage("installation log start", color.Gray)
-	cmd := exec.Command(packageManager, "install")
-	cmd.Dir = filepath.Join(COMPONENT_DIRECTORY, componentName)
-	cmd.Stdout = os.Stdout
-	err = cmd.Run()
+	componentName, err = module.InstallDependencies(packageManager, componentName)
 	if err != nil {
 		return "", err
 	}
-	module.FullWidthMessage("installation log end", color.Gray)
 
 	return componentName, nil
 }
