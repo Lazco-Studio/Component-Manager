@@ -23,6 +23,11 @@ func Init(ctx *cli.Context) error {
 		}
 		return err
 	}
+	color.Magentaln("Found package manager:")
+	for _, pm := range PACKAGE_MANAGERS {
+		color.Grayp(" - ")
+		color.Cyanln(pm)
+	}
 
 	projectPath, err := module.GetPath(ctx.Args().Get(0))
 	if err != nil {
