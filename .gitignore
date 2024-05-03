@@ -5,4 +5,7 @@
 /env
 
 # Lazco Component
-/lazco_components
+/lazco_components*
+
+# Custom config
+.cmrc.json
