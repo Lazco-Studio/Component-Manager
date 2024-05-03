@@ -19,7 +19,7 @@ func InstallDependencies(packageManager string, componentName string) (string, e
 	var cmd *exec.Cmd
 	switch packageManager {
 	case "npm":
-		cmd = exec.Command(packageManager, "install", "--production", "--legacy-peer-deps")
+		cmd = exec.Command(packageManager, "install", "--omit=dev", "--legacy-peer-deps")
 	case "yarn":
 		cmd = exec.Command(packageManager, "workspaces", "focus", "--production")
 	default:
