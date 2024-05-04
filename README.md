@@ -16,9 +16,17 @@ It simplifies the development process by allowing developers to effortlessly dow
 It will automatically download and install the necessary dependencies for the selected component. It also supports multiple package manager, automatically adapting to utilize pnpm, bun, yarn, or npm as required.
 
 # Installation
+
+## Linux, MacOS
 Copy and paste the following command to your terminal.
 ```bash
 bash <(wget -qO- https://short.on-cloud.tw/cm-install-script)
+```
+
+## Windows
+Copy and paste the following command to Powershell.
+```powershell
+. { iwr -useb https://short.on-cloud.tw/cm-install-script-windows } | iex;
 ```
 
 Supported Platforms
