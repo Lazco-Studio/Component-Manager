@@ -50,12 +50,12 @@ function darwin_amd64() {
 
 function windows_amd64() {
   echo -e "${MAGENTA}${ROCKET} Building ${BLUE}windows/amd64${MAGENTA}...${NC}"
-  CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -ldflags "-s -w -X main.GITHUB_TOKEN=$GITHUB_TOKEN" -o ./dist/uncompressed/cm-cli_windows_amd64
-  echo -e "${GREEN}${CHECKMARK} File saved as ${BLUE}./dist/uncompressed/cm-cli_windows_amd64${NC}"
+  CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -ldflags "-s -w -X main.GITHUB_TOKEN=$GITHUB_TOKEN" -o ./dist/uncompressed/cm-cli_windows_amd64.exe
+  echo -e "${GREEN}${CHECKMARK} File saved as ${BLUE}./dist/uncompressed/cm-cli_windows_amd64.exe${NC}"
 
   echo -e "${MAGENTA}${ROCKET} Compressing ${BLUE}windows/amd64${MAGENTA}...${NC}"
-  upx -f --best --lzma ./dist/uncompressed/cm-cli_windows_amd64 -o ./dist/compressed/cm-cli_windows_amd64
-  echo -e "${GREEN}${CHECKMARK} File saved as ${BLUE}./dist/compressed/cm-cli_windows_amd64${NC}"
+  upx -f --best --lzma ./dist/uncompressed/cm-cli_windows_amd64.exe -o ./dist/compressed/cm-cli_windows_amd64.exe
+  echo -e "${GREEN}${CHECKMARK} File saved as ${BLUE}./dist/compressed/cm-cli_windows_amd64.exe${NC}"
 }
 
 if [ "$1" == "linux_amd64" ]; then
