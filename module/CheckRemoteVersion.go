@@ -51,7 +51,7 @@ func CheckRemoteVersion(ctx *cli.Context, muteUpToDate bool) (bool, error) {
 			color.Greenln(remoteVersion.String())
 
 			color.Magentap("Run \"")
-			color.Cyanp("bash <(wget -qO- https://short.on-cloud.tw/cm-install-script)")
+			color.Cyanp("cm update")
 			color.Magentaln("\" to update.")
 
 			return false, nil

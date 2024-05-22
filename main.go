@@ -29,7 +29,7 @@ func main() {
 	app := &cli.App{
 		Name:     "Component-Manager",
 		HelpName: "cm",
-		Usage:    "A tool for managing JS/TS components and modules.",
+		Usage:    "a tool for managing JS/TS components and modules.",
 		Version:  "v1.4.2",
 		Commands: []*cli.Command{
 			{
@@ -66,6 +66,12 @@ func main() {
 					return module.LoadAppConfig(ctx, officialConfigBytes)
 				},
 				Action: command.Add,
+			},
+			{
+				Name:    "update",
+				Aliases: []string{"upgrade"},
+				Usage:   "update the component manager",
+				Action:  command.Update,
 			},
 		},
 	}
