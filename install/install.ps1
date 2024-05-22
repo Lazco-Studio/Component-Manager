@@ -19,7 +19,7 @@ function Test-Admin {
 if ((Test-Admin) -eq $false)  {
   if ($elevated) {
   } else {
-    Start-Process powershell.exe -Verb RunAs -ArgumentList ('-noprofile -noexit -file "{0}" -elevated' -f ($myinvocation.MyCommand.Definition))
+    Write-Host "This script requires Administrator privileges." -ForegroundColor $RED
   }
   exit
 }
@@ -30,9 +30,9 @@ function Add-To-Path {
   if ($currentPath -split ";" -notcontains $install_path) {
     $newPath = $currentPath + ";" + $install_path
     [Environment]::SetEnvironmentVariable("PATH", $newPath, "Machine")
-    Write-Host "Directory added to PATH variable successfully." -ForegroundColor Green
+    Write-Host "Directory added to PATH variable successfully." -ForegroundColor $Green
   } else {
-    Write-Host "Directory is already in PATH variable." -ForegroundColor Yellow
+    Write-Host "Directory is already in PATH variable." -ForegroundColor $Yellow
   }
 }
 
