@@ -4,6 +4,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 
 	"github.com/urfave/cli/v2"
 
@@ -12,8 +13,14 @@ import (
 
 func DownloadScript() string {
 	tempDir := os.TempDir()
+	var scriptURL string
 
-	scriptDir := module.Download("https://short.on-cloud.tw/cm-install-script", filepath.Join(tempDir, "cm-install-script"))
+	if runtime.GOOS == "windows" {
+		scriptURL = "https://short.on-cloud.tw/cm-install-script-windows"
+	} else {
+		scriptURL = "https://short.on-cloud.tw/cm-install-script"
+	}
+	scriptDir := module.Download(scriptURL, filepath.Join(tempDir, "cm-install-script"))
 	os.Chmod(scriptDir, 0755)
 
 	return scriptDir
