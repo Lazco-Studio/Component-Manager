@@ -46,9 +46,9 @@ function Install-Tool {
   Add-To-Path
 
   $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User") 
+  $version = & "$app_path" --version
 
-  Write-Host "Successfully installed $app_name." -ForegroundColor $GREEN
-  Write-Host "Please open a new PowerShell session to start using $app_name." -ForegroundColor $YELLOW
+  Write-Host "Successfully installed $version." -ForegroundColor $GREEN
 }
 
 

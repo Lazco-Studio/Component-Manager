@@ -51,7 +51,8 @@ function install() {
   sudo wget $download_link -q --show-progress --progress=bar:force -O /usr/local/bin/$app_name
   echo -e -n "${NC}"
   sudo chmod +x /usr/local/bin/$app_name
-  echo -e "${GREEN}${CHECKMARK} Successfully installed ${BLUE}$app_name${GREEN}.${NC}"
+  app_version=$(/usr/local/bin/$app_name --version)
+  echo -e "${GREEN}${CHECKMARK} Successfully installed ${BLUE}$app_version${GREEN}.${NC}"
 }
 
 if [ -f /usr/local/bin/$app_name ]; then
