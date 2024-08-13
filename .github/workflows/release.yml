@@ -31,7 +31,7 @@ jobs:
     name: Build and compress binary
     needs: [check]
     if: ${{ needs.check.outputs.commit_message != '' }}
-    runs-on: blacksmith-4vcpu-ubuntu-2204
+    runs-on: blacksmith-32vcpu-ubuntu-2204
 
     steps:
     - name: Checkout code
