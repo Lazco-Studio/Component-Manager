@@ -1,6 +1,6 @@
 module Component-Manager
 
-go 1.22.2
+go 1.23.2
 
 require github.com/urfave/cli/v2 v2.27.1
 
