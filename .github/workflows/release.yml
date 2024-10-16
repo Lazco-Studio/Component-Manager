@@ -8,7 +8,7 @@ on:
 jobs:
   check:
     name: Check commit message
-    runs-on: blacksmith-4vcpu-ubuntu-2204
+    runs-on: blacksmith-2vcpu-ubuntu-2204
     outputs:
       commit_message: ${{ steps.check_commit_message.outputs.commit_message }}
 
@@ -91,7 +91,7 @@ jobs:
     name: Create release and upload asset
     needs: [check, build]
     if: ${{ needs.check.outputs.commit_message != '' }}
-    runs-on: blacksmith-4vcpu-ubuntu-2204
+    runs-on: blacksmith-2vcpu-ubuntu-2204
     permissions: write-all
 
     steps:
