@@ -4,7 +4,7 @@ on:
   push:
     branches:
     - main
- 
+
 jobs:
   check:
     name: Check commit message
@@ -115,7 +115,7 @@ jobs:
           Please follow the [installation guide](https://github.com/lazco-studio/Component-Manager?tab=readme-ov-file#installation) to install the latest version of the Component Manager.
         generate_release_notes: true
         append_body: true
-        make_latest: "true"
+        make_latest: true
         files: |
           dist/compressed/cm-cli_linux_amd64
           dist/compressed/cm-cli_darwin_amd64
