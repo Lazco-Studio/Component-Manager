@@ -31,7 +31,7 @@ jobs:
     name: Build and compress binary
     needs: [check]
     if: ${{ needs.check.outputs.commit_message != '' }}
-    runs-on: blacksmith-32vcpu-ubuntu-2204
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
@@ -43,7 +43,7 @@ jobs:
         mkdir -p dist/compressed
 
     - name: Setup go
-      uses: useblacksmith/setup-go@v6
+      uses: actions/setup-go@v4
       with:
         go-version: '1.23.2'
 
